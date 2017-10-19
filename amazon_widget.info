@@ -1,0 +1,5 @@
+name = Amazon Widget
+description = Client side Amazon widget.
+package = User interface
+core = 7.x
+dependencies[] = amazon
