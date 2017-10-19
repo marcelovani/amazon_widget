@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the amazon module.
+ */
+
+/**
+ * Implements hook_install.
+ */
+function amazon_widget_install() {
+  variable_set('amazon_widget_geoip_url', 'http://freegeoip.net/json');
+  variable_set('amazon_widget_geoip_data_type', 'json');
+  variable_set('amazon_widget_geoip_country_code_key', 'country_code');
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function amazon_widget_uninstall() {
+  $vars = array(
+    'amazon_widget_geoip_url',
+    'amazon_widget_geoip_data_type',
+    'amazon_widget_geoip_country_code_key',
+  );
+	foreach ($vars as $var) {
+    variable_del($var);
+  }
+}
