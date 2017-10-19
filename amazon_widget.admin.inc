@@ -36,5 +36,25 @@ function amazon_widget_settings_form($form, &$form_state) {
     '#required' => TRUE,
   );
 
+  $url = variable_get('amazon_widget_geoip_url');
+  $request = drupal_http_request(trim($url, '/') . '/');
+
+  if ($request->code != 404 && !empty($request->data)) {
+    $form['amazon_widget']['example'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Response example'),
+      '#value' => $request->data,
+      '#disabled' => TRUE
+    );
+    $key = variable_get('amazon_widget_geoip_country_code_key', 'country_code');
+    $form['amazon_widget']['country'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Detected country code'),
+      '#value' => json_decode($request->data)->$key,
+      '#size' => 3,
+      '#disabled' => TRUE
+    );
+  }
+
   return system_settings_form($form);
 }
