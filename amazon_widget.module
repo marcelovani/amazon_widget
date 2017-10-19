@@ -1,0 +1,24 @@
+<?php
+/**
+ * @file
+ * Client side widget for amazon.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function amazon_widget_menu() {
+  $items = array();
+  $items['admin/config/services/amazon/widget'] = array(
+    'title' => 'Widget',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('amazon_widget_settings_form'),
+    'file' => 'amazon_widget.admin.inc',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer amazon'),
+    'type' => MENU_LOCAL_TASK
+  );
+
+  return $items;
+}
+
