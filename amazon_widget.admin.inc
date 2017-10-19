@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @file
+ * Amazon Widget Admin pages.
+ */
+
+/**
+ * Basic settings form.
+ */
+function amazon_widget_settings_form($form, &$form_state) {
+  $form['amazon_widget'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Geoip settings',
+  );
+  $form['amazon_widget']['amazon_widget_geoip_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('The url for the geoip tool'),
+    '#description' => t('You can use any provider that returns the country code.'),
+    '#default_value' => variable_get('amazon_widget_geoip_url'),
+    '#required' => TRUE,
+  );
+  $form['amazon_widget']['amazon_widget_geoip_data_type'] = array(
+    '#type' => 'select',
+    '#title' => t('Geoip response format'),
+    '#description' => t('The format of the response.'),
+    '#options' => array('json' => 'Json', 'csv' => 'CSV', 'xml' => 'XML'),
+    '#default_value' => variable_get('amazon_widget_geoip_data_type', 'json'),
+    '#required' => TRUE,
+  );
+  $form['amazon_widget']['amazon_widget_geoip_country_code_key'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Geoip country code key'),
+    '#description' => t('The key found in the response that maps to the country code.'),
+    '#default_value' => variable_get('amazon_widget_geoip_country_code_key', 'country_code'),
+    '#required' => TRUE,
+  );
+
+  return system_settings_form($form);
+}
