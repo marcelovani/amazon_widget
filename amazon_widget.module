@@ -31,16 +31,42 @@ function amazon_widget_page_alter(&$page) {
     $url = check_url(variable_get('amazon_widget_geoip_url'));
     $data_type = check_plain(variable_get('amazon_widget_geoip_data_type'));
     $country_code_key = check_plain(variable_get('amazon_widget_geoip_country_code_key'));
+    $default_locale = check_plain(variable_get('amazon_default_locale', 'US'));
 
+    // Hide all localized amazon items.
+    $amazon_data = amazon_data_cache();
+    $locales = $amazon_data['locales'];
+    $css = '';
+    foreach ($locales as $locale => $item) {
+      if (variable_get('amazon_locale_' . $locale . '_associate_id', '')) {
+        $css .= '.amazon-item.locale-' . strtolower($locale) . '{ display: none; }' . PHP_EOL;
+      }
+    }
+    $options = array(
+      'type' => 'inline',
+      'weight' => 1000,
+      'preprocess' => FALSE,
+    );
+    drupal_add_css($css, $options);
+
+    // Add widget settings.
     drupal_add_js(array(
       'amazon_widget' => array(
         'geoip_url' => trim($url, '/') . '/',
         'data_type' => $data_type,
         'country_code_key' => $country_code_key,
+        'default_locale' => $default_locale,
       ),
     ), 'setting');
 
-    drupal_add_js(drupal_get_path('module', 'amazon_widget') . '/amazon_widget.js');
+    // Add widget controller.
+    $path = drupal_get_path('module', 'amazon_widget') . '/amazon_widget.js';
+    $options = array(
+      'weight' => 1000,
+      'every_page' => TRUE,
+      'preprocess' => FALSE,
+      'requires_jquery' => TRUE,
+    );
+    drupal_add_js($path, $options);
   }
 }
-
