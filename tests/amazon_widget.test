@@ -1,0 +1,144 @@
+<?php
+
+/**
+ * @file
+ * Tests for Amazon Widget module.
+ */
+class AmazonWidgetTest extends DrupalWebTestCase {
+  protected $admin_user;
+  protected $node;
+
+  /**
+   * @inheritdoc
+   *
+   * @return array
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'Amazon Widget',
+      'description' => 'Tests that Amazon Widget renders correctly.',
+      'group' => 'Amazon',
+    );
+  }
+
+  /**
+   * @inheritdoc
+   */
+  protected function setUp() {
+    // Enable modules.
+    $modules = array(
+      'amazon',
+      'node',
+      'amazon_test',
+      'amazon_wysiwyg',
+      'amazon_widget',
+    );
+    parent::setUp($modules);
+
+    // Module settings.
+    variable_set('amazon_refresh_schedule', REQUEST_TIME + 3600);
+    variable_set('amazon_aws_access_key', $this->randomString());
+    variable_set('amazon_aws_secret_access_key', $this->randomString());
+    variable_set('amazon_default_locale', 'US');
+    variable_set('amazon_locale_US_associate_id', 'test-20');
+    variable_set('amazon_locale_UK_associate_id', 'test-21');
+  }
+
+  /**
+   * Helper to create admin user and login.
+   */
+  private function adminLogin() {
+    // Create Admin user.
+    $this->admin_user = $this->drupalCreateUser(array(
+        'administer content types',
+        'administer nodes',
+        'create article content',
+        'edit any article content',
+        'administer fields',
+        'administer filters',
+        'administer amazon',
+      )
+    );
+    $this->drupalLogin($this->admin_user);
+  }
+
+  /**
+   * Helper to configure Input filters.
+   */
+  private function configureInputFilters() {
+    $this->adminLogin();
+
+    $this->drupalGet('admin/config/content/formats/full_html');
+    $this->assertResponse(200);
+    $edit = [
+      "filters[amazon_wysiwyg][status]" => '1',
+      // Drupal ships with 3 roles by default, ticking the new user created by the test.
+      "roles[4]" => '1',
+    ];
+    $this->drupalPost(NULL, $edit, t('Save configuration'));
+  }
+
+  /**
+   * Helper to create a node.
+   */
+  private function createNode() {
+    $amazon_item = amazon_test_get_amazon_item();
+    $body_value  = '<!--amazon-widget{"data_id":"1498486197951","asin":"' . $amazon_item['asin'] . '","style":"buy_now_wide","locale":"US"}-->';
+    $this->node = $this->drupalCreateNode(
+      array(
+        'type' => 'article',
+        'body' => array(
+          LANGUAGE_NONE => array(
+            array(
+              'value' => $body_value,
+              'format' => 'full_html',
+              'summary' => '',
+            ),
+          ),
+        )
+      )
+    );
+  }
+
+  /**
+   * Helper to visit a node;
+   */
+  private function visitNode() {
+    $this->drupalGet('node/' . $this->node->nid);
+    $this->assertResponse(200);
+  }
+
+  /**
+   * Test Admin UI.
+   */
+  public function testAdminUi() {
+    $this->adminLogin();
+
+    // Test wysiwyg plugin on node.
+    $this->drupalGet('admin/config/services/amazon/widget');
+    $this->assertResponse(200);
+    $this->assertPattern("/input.*edit-amazon-widget-geoip-country-code-key.*country_code/", "Configuration for country code key is present");
+    $this->assertPattern("/input.*edit-amazon-widget-geoip-url.*http:\/\/freegeoip.net\/json/", "Configuration for geoip server is present");
+  }
+
+  /**
+   * Test Nodes.
+   */
+  public function testNodes() {
+    $this->configureInputFilters();
+    $this->createNode();
+    $this->visitNode();
+
+    // Test CSS for widget.
+    $this->assertRaw('.amazon-item.locale-uk {display: none;}', 'CSS to hide widgets on page load is present.');
+
+    // When javascript is not available, we do not hide the widget for the default locale.
+    $this->assertNoRaw('.amazon-item.locale-us {display: none;}', 'CSS to hide widget for default locale is not present.');
+
+    // Since there is no configuration for Canada associate ID, the CSS to hide Canada widget should not appear on the page.
+    $this->assertNoRaw('.amazon-item.locale-ca {display: none;}', 'CSS to hide Canada widget is not present.');
+
+    // Test Js for widget.
+    $this->assertRaw('amazon_widget/amazon_widget.js', 'Required Js is present.');
+  }
+}
