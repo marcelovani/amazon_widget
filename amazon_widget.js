@@ -62,10 +62,11 @@
      */
     showLocalizedWidget: function (countryCode) {
       if (countryCode === undefined) {
-        this.showLocalizedWidget(Drupal.settings.amazon_widget.default_locale);
+        return this.showLocalizedWidget(Drupal.settings.amazon_widget.default_locale);
       }
 
       var target = null;
+      var target_found = false;
       var classes = Drupal.settings.amazon_widget.classes;
       var css_show = Drupal.settings.amazon_widget.css_show;
 
@@ -73,13 +74,13 @@
         target = $(classes[i] + '.locale-' + countryCode.toLowerCase());
         if (target !== null && target.length) {
           target.css('display', 'block'); //@todo use css_show config.
+          target_found = true;
         }
-        else {
-          // If a country code is not resolved, display the default widget.
-          if (countryCode != Drupal.settings.amazon_widget.default_locale) {
-            this.showLocalizedWidget(Drupal.settings.amazon_widget.default_locale);
-          }
-        }
+      }
+
+      // If the country code is not resolved, display the default widget.
+      if (!target_found) {
+        this.showLocalizedWidget(Drupal.settings.amazon_widget.default_locale);
       }
     },
 
