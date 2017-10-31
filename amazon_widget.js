@@ -61,21 +61,24 @@
      * widget for the default Amazon locale will be displayed.
      */
     showLocalizedWidget: function (countryCode) {
+      if (countryCode === undefined) {
+        this.showLocalizedWidget(Drupal.settings.amazon_widget.default_locale);
+      }
+
       var target = null;
-      if (countryCode !== undefined) {
-        target = $('.amazon-item.locale-' + countryCode.toLowerCase());
-        //console.debug(target);
-      }
-      if (target !== null && target.length) {
-        // Display the localized widget.
-        //console.debug('Display ' + countryCode);
-        target.css('display', 'block');
-      }
-      else {
-        //console.debug('Fallback');
-        // If a country code is not resolved, display the default widget.
-        if (countryCode != Drupal.settings.amazon_widget.default_locale) {
-          this.showLocalizedWidget(Drupal.settings.amazon_widget.default_locale);
+      var classes = Drupal.settings.amazon_widget.classes;
+      var css_show = Drupal.settings.amazon_widget.css_show;
+
+      for (var i = 0, len = classes.length; i < len; i++) {
+        target = $(classes[i] + '.locale-' + countryCode.toLowerCase());
+        if (target !== null && target.length) {
+          target.css('display', 'block'); //@todo use css_show config.
+        }
+        else {
+          // If a country code is not resolved, display the default widget.
+          if (countryCode != Drupal.settings.amazon_widget.default_locale) {
+            this.showLocalizedWidget(Drupal.settings.amazon_widget.default_locale);
+          }
         }
       }
     },

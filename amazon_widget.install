@@ -9,9 +9,15 @@
  * Implements hook_install.
  */
 function amazon_widget_install() {
-  variable_set('amazon_widget_geoip_url', 'http://freegeoip.net/json');
-  variable_set('amazon_widget_geoip_data_type', 'json');
-  variable_set('amazon_widget_geoip_country_code_key', 'country_code');
+  $install_variables = array(
+    'amazon_widget_geoip_url',
+    'amazon_widget_geoip_data_type',
+    'amazon_widget_geoip_country_code_key',
+  );
+  foreach ($install_variables as $key => $name) {
+    $value = _amazon_widget_variable_get($name);
+    variable_set($name, $value);
+  }
 }
 
 /**
