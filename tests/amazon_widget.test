@@ -70,11 +70,11 @@ class AmazonWidgetTest extends DrupalWebTestCase {
 
     $this->drupalGet('admin/config/content/formats/full_html');
     $this->assertResponse(200);
-    $edit = [
+    $edit = array(
       "filters[amazon_wysiwyg][status]" => '1',
       // Drupal ships with 3 roles by default, ticking the new user created by the test.
       "roles[4]" => '1',
-    ];
+    );
     $this->drupalPost(NULL, $edit, t('Save configuration'));
   }
 
