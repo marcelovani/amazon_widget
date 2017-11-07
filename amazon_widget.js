@@ -11,7 +11,6 @@
         // If a cookie is available, use it.
         var countryCode = parent.getCookie('amazonWidgetCountry');
         if (countryCode !== null) {
-          //console.debug('Found cookie ' + countryCode);
           parent.showLocalizedWidget(countryCode);
           return;
         }
@@ -31,12 +30,11 @@
             }
 
             // Set cookie.
-            if (typeof countryCode === "string") {
-              //console.debug('Set cookie ' + countryCode);
+            if (typeof countryCode === 'string') {
               var date = new Date();
               var hours = 4;
               date.setTime(date.getTime() + (hours * 60 * 60 * 1000));
-              var expires = "; expires=" + date.toGMTString();
+              var expires = '; expires=' + date.toGMTString();
               document.cookie = 'amazonWidgetCountry=' + countryCode + '; ' + expires + '; path=/';
             }
 
@@ -44,7 +42,6 @@
           },
           error: function (xhr) {
             parent.showLocalizedWidget();
-            //console.debug('Request error');
             if (window.console) {
               console.debug('Failed to detect country code');
               console.debug(xhr);
@@ -73,7 +70,7 @@
       for (var i = 0, len = classes.length; i < len; i++) {
         target = $(classes[i] + '.locale-' + countryCode.toLowerCase());
         if (target !== null && target.length) {
-          target.css('display', 'block'); //@todo use css_show config.
+          target.css(JSON.parse(css_show));
           target_found = true;
         }
       }
@@ -91,14 +88,12 @@
      * @returns {T}
      */
     getCookie: function (name) {
-      var value = "; " + document.cookie;
-      var parts = value.split("; " + name + "=");
+      var value = '; ' + document.cookie;
+      var parts = value.split('; ' + name + '=');
       if (parts.length === 2) {
-        return parts.pop().split(";").shift();
+        return parts.pop().split(';').shift();
       }
-      else {
-        return null;
-      }
+      return null;
     },
 
   };

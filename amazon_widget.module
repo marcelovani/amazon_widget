@@ -60,12 +60,13 @@ function amazon_widget_page_alter(&$page) {
       }
     }
   }
+
   $options = array(
     'type' => 'inline',
     'weight' => 100,
     'preprocess' => FALSE,
   );
-  drupal_add_css(implode(', ', $css_array) . ' ' . $css_hide, $options);
+  drupal_add_css(implode(', ', $css_array) . ' ' . str_replace('"', '', $css_hide), $options);
 
   // Add widget settings.
   drupal_add_js(array(
@@ -111,10 +112,6 @@ function _amazon_widget_variable_get($name) {
       $default = 'country_code';
       break;
 
-    case 'amazon_widget_geoip_country_code_key':
-      $default = 'country_code';
-      break;
-
     case 'amazon_widget_css_classes':
       $default = array(
         '.amazon-item',
@@ -123,11 +120,11 @@ function _amazon_widget_variable_get($name) {
       break;
 
     case 'amazon_widget_css_show':
-      $default = '{display: block;}';
+      $default = '{"display": "block"}';
       break;
 
     case 'amazon_widget_css_hide':
-      $default = '{display: none;}';
+      $default = '{"display": "none"}';
       break;
 
     case 'amazon_default_locale':
