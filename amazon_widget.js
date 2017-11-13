@@ -58,8 +58,9 @@
      * widget for the default Amazon locale will be displayed.
      */
     showLocalizedWidget: function (countryCode) {
+      var defaultLocale = Drupal.settings.amazon_widget.default_locale;
       if (countryCode === undefined) {
-        return this.showLocalizedWidget(Drupal.settings.amazon_widget.default_locale);
+        return this.showLocalizedWidget(defaultLocale);
       }
 
       var target = null;
@@ -76,8 +77,8 @@
       }
 
       // If the country code is not resolved, display the default widget.
-      if (!target_found) {
-        this.showLocalizedWidget(Drupal.settings.amazon_widget.default_locale);
+      if (!target_found && countryCode !== defaultLocale) {
+        this.showLocalizedWidget(defaultLocale);
       }
     },
 
