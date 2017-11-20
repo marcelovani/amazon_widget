@@ -74,6 +74,7 @@ function amazon_widget_page_alter(&$page) {
       'geoip_url' => trim($url, '/') . '/',
       'data_type' => $data_type,
       'country_code_key' => $country_code_key,
+      'locales' => array_keys($locales),
       'default_locale' => $default_locale,
       'classes' => $classes,
       'css_hide' => $css_hide,

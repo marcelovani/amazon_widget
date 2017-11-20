@@ -53,6 +53,20 @@
     },
 
     /**
+     * Hides all amazon widgets on start.
+     */
+    hideAll: function() {
+      var classes = Drupal.settings.amazon_widget.classes;
+      var css_hide = Drupal.settings.amazon_widget.css_hide;
+      $.each(Drupal.settings.amazon_widget.locales, function( i, countryCode ) {
+        var target = $(classes[i] + '.locale-' + countryCode.toLowerCase());
+        if (target !== null && target.length) {
+          target.css(JSON.parse(css_hide));
+        }
+      });
+    },
+
+    /**
      * Shows the localized widgets for a given country code.
      * If there isn't any widget that matches the country code, then the
      * widget for the default Amazon locale will be displayed.
@@ -68,6 +82,7 @@
       var classes = Drupal.settings.amazon_widget.classes;
       var css_show = Drupal.settings.amazon_widget.css_show;
 
+      this.hideAll();
       for (var i = 0, len = classes.length; i < len; i++) {
         target = $(classes[i] + '.locale-' + countryCode.toLowerCase());
         if (target !== null && target.length) {
