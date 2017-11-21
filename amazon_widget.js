@@ -56,13 +56,16 @@
      * Hides all amazon widgets on start.
      */
     hideAll: function() {
+      var classes = Drupal.settings.amazon_widget.classes;
       var css_hide = Drupal.settings.amazon_widget.css_hide;
-      $.each(Drupal.settings.amazon_widget.locales, function( i, countryCode ) {
-        var target = $('.amazon-item.locale-' + countryCode.toLowerCase());
-        if (target !== null && target.length) {
-          target.css(JSON.parse(css_hide));
-        }
-      });
+      for (var i = 0, len = classes.length; i < len; i++) {
+        $.each(Drupal.settings.amazon_widget.locales, function( item, countryCode ) {
+          var target = $(classes[i] + '.locale-' + countryCode.toLowerCase());
+          if (target !== null && target.length) {
+            target.css(JSON.parse(css_hide));
+          }
+        });
+      }
     },
 
     /**
