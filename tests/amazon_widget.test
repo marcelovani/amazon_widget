@@ -137,7 +137,7 @@ class AmazonWidgetTest extends DrupalWebTestCase {
     $this->assertRaw('£8.72', 'UK widget price is on the page.');
 
     // Test CSS for widget.
-    $this->assertRaw('.amazon-item.locale-uk, .field-type-asin.locale-uk {display: none}', 'CSS to hide widget for non-default locale is present.');
+    $this->assertRaw('.amazon-item.locale-uk.amazon_hide, .field-type-asin.locale-uk}', 'CSS to hide widget for non-default locale is present.');
 
     // When javascript is not available, we do not hide the widget for the default locale.
     $this->assertNoRaw('locale-us {display: none}', 'CSS to hide widget for default locale is not present.');

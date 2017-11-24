@@ -22,23 +22,20 @@ function amazon_widget_menu() {
   return $items;
 }
 
-/**
- * Implements hook_page_alter().
- */
-function amazon_widget_page_alter(&$page) {
-  if (path_is_admin(current_path())) {
+
+function amazon_widget_preprocess_amazon_item(&$variables, $theme_type) {
+  _amazon_widget_hide($variables['classes_array']);
+}
+
+function _amazon_widget_hide(&$classes_array) {
+  if (in_array('amazon-item', $classes_array)) {
     return;
   }
-
+echo 1;
   $js_supported = FALSE;
   if (isset($_COOKIE['has_js']) && $_COOKIE['has_js']) {
     $js_supported = TRUE;
   }
-
-  $url = check_url(_amazon_widget_variable_get('amazon_widget_geoip_url'));
-  $data_type = check_plain(_amazon_widget_variable_get('amazon_widget_geoip_data_type'));
-  $country_code_key = check_plain(_amazon_widget_variable_get('amazon_widget_geoip_country_code_key'));
-  $default_locale = check_plain(_amazon_widget_variable_get('amazon_default_locale'));
 
   $amazon_data = amazon_data_cache();
   $locales = $amazon_data['locales'];
@@ -46,8 +43,11 @@ function amazon_widget_page_alter(&$page) {
   // Hide all localized amazon items.
   $css_array = array();
   $classes = _amazon_widget_variable_get('amazon_widget_css_classes');
-  $css_hide = _amazon_widget_variable_get('amazon_widget_css_hide');
-  $css_show = _amazon_widget_variable_get('amazon_widget_css_show');
+  $default_locale = check_plain(_amazon_widget_variable_get('amazon_default_locale'));
+
+//  $css_hide = _amazon_widget_variable_get('amazon_widget_css_hide');
+//  $css_show = _amazon_widget_variable_get('amazon_widget_css_show');
+
   foreach ($locales as $locale => $item) {
     if (variable_get('amazon_locale_' . $locale . '_associate_id', '')) {
       // When the browser doesn't support js, do not hide the widget for the default locale.
@@ -56,17 +56,39 @@ function amazon_widget_page_alter(&$page) {
       }
       // Hides all elements configured in the css selectors settings.
       foreach ($classes as $key => $selector) {
-        $css_array[$locale . $key] = $selector . '.locale-' . strtolower($locale);
+        if (in_array('locale-' . strtolower($locale), $classes_array)) {
+          $classes_array[] = 'amazon-hide';
+        }
       }
     }
   }
+}
+
+/**
+ * Implements hook_page_alter().
+ */
+function amazon_widget_page_alter(&$page) {
+  if (path_is_admin(current_path())) {
+    return;
+  }
+
+  $url = check_url(_amazon_widget_variable_get('amazon_widget_geoip_url'));
+  $data_type = check_plain(_amazon_widget_variable_get('amazon_widget_geoip_data_type'));
+  $country_code_key = check_plain(_amazon_widget_variable_get('amazon_widget_geoip_country_code_key'));
+  $default_locale = check_plain(_amazon_widget_variable_get('amazon_default_locale'));
+  $classes = _amazon_widget_variable_get('amazon_widget_css_classes');
+
+  $amazon_data = amazon_data_cache();
+  $locales = $amazon_data['locales'];
+
 
   $options = array(
     'type' => 'inline',
     'weight' => 100,
     'preprocess' => FALSE,
   );
-  drupal_add_css(implode(', ', $css_array) . ' ' . str_replace('"', '', $css_hide), $options);
+
+  drupal_add_css('.amazon-hide {display: none;}', $options);
 
   // Add widget settings.
   drupal_add_js(array(
@@ -77,8 +99,6 @@ function amazon_widget_page_alter(&$page) {
       'locales' => array_keys($locales),
       'default_locale' => $default_locale,
       'classes' => $classes,
-      'css_hide' => $css_hide,
-      'css_show' => $css_show,
     ),
   ), 'setting');
 
@@ -119,13 +139,13 @@ function _amazon_widget_variable_get($name) {
         '.field-type-asin',
       );
       break;
-
-    case 'amazon_widget_css_show':
-      $default = '{"display": "block"}';
-      break;
+//
+//    case 'amazon_widget_css_show':
+//      $default = 'amazon-show';
+//      break;
 
     case 'amazon_widget_css_hide':
-      $default = '{"display": "none"}';
+      $default = 'amazon-hide';
       break;
 
     case 'amazon_default_locale':

@@ -57,12 +57,12 @@
      */
     hideAll: function() {
       var classes = Drupal.settings.amazon_widget.classes;
-      var css_hide = Drupal.settings.amazon_widget.css_hide;
+      //var css_hide = Drupal.settings.amazon_widget.css_hide;
       for (var i = 0, len = classes.length; i < len; i++) {
         $.each(Drupal.settings.amazon_widget.locales, function( item, countryCode ) {
           var target = $(classes[i] + '.locale-' + countryCode.toLowerCase());
           if (target !== null && target.length) {
-            target.css(JSON.parse(css_hide));
+            target.addClass('amazon-hide');
           }
         });
       }
@@ -82,13 +82,15 @@
       var target = null;
       var target_found = false;
       var classes = Drupal.settings.amazon_widget.classes;
-      var css_show = Drupal.settings.amazon_widget.css_show;
+      // var css_show = Drupal.settings.amazon_widget.css_show;
+      // var css_hide = Drupal.settings.amazon_widget.css_hide;
 
       this.hideAll();
       for (var i = 0, len = classes.length; i < len; i++) {
+       // console.log(classes[i] + '.locale-' + countryCode.toLowerCase());
         target = $(classes[i] + '.locale-' + countryCode.toLowerCase());
         if (target !== null && target.length) {
-          target.css(JSON.parse(css_show));
+          target.removeClass('amazon-hide');
           target_found = true;
         }
       }
