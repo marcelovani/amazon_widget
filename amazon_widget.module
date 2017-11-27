@@ -22,16 +22,19 @@ function amazon_widget_menu() {
   return $items;
 }
 
-
+/**
+ * Implements hook_preprocess_amazon_item().
+ */
 function amazon_widget_preprocess_amazon_item(&$variables, $theme_type) {
   _amazon_widget_hide($variables['classes_array']);
 }
 
+/**
+ * Helper function to add hide the widget on page load.
+ * @param $classes_array
+ */
 function _amazon_widget_hide(&$classes_array) {
-  if (in_array('amazon-item', $classes_array)) {
-    return;
-  }
-echo 1;
+
   $js_supported = FALSE;
   if (isset($_COOKIE['has_js']) && $_COOKIE['has_js']) {
     $js_supported = TRUE;
@@ -41,12 +44,8 @@ echo 1;
   $locales = $amazon_data['locales'];
 
   // Hide all localized amazon items.
-  $css_array = array();
   $classes = _amazon_widget_variable_get('amazon_widget_css_classes');
   $default_locale = check_plain(_amazon_widget_variable_get('amazon_default_locale'));
-
-//  $css_hide = _amazon_widget_variable_get('amazon_widget_css_hide');
-//  $css_show = _amazon_widget_variable_get('amazon_widget_css_show');
 
   foreach ($locales as $locale => $item) {
     if (variable_get('amazon_locale_' . $locale . '_associate_id', '')) {
@@ -54,9 +53,10 @@ echo 1;
       if (!$js_supported && $locale == $default_locale) {
         continue;
       }
+
       // Hides all elements configured in the css selectors settings.
       foreach ($classes as $key => $selector) {
-        if (in_array('locale-' . strtolower($locale), $classes_array)) {
+        if (in_array('locale-' . strtolower($locale), $classes_array) && !in_array('amazon-hide', $classes_array)) {
           $classes_array[] = 'amazon-hide';
         }
       }
