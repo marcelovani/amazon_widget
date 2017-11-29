@@ -26,41 +26,10 @@ function amazon_widget_menu() {
  * Implements hook_preprocess_amazon_item().
  */
 function amazon_widget_preprocess_amazon_item(&$variables, $theme_type) {
-  _amazon_widget_hide($variables['classes_array']);
-}
-
-/**
- * Helper function to add hide the widget on page load.
- * @param $classes_array
- */
-function _amazon_widget_hide(&$classes_array) {
-
-  $js_supported = FALSE;
+  // If JS is enabled.
   if (isset($_COOKIE['has_js']) && $_COOKIE['has_js']) {
-    $js_supported = TRUE;
-  }
-
-  $amazon_data = amazon_data_cache();
-  $locales = $amazon_data['locales'];
-
-  // Hide all localized amazon items.
-  $classes = _amazon_widget_variable_get('amazon_widget_css_classes');
-  $default_locale = check_plain(_amazon_widget_variable_get('amazon_default_locale'));
-
-  foreach ($locales as $locale => $item) {
-    if (variable_get('amazon_locale_' . $locale . '_associate_id', '')) {
-      // When the browser doesn't support js, do not hide the widget for the default locale.
-      if (!$js_supported && $locale == $default_locale) {
-        continue;
-      }
-
-      // Hides all elements configured in the css selectors settings.
-      foreach ($classes as $key => $selector) {
-        if (in_array('locale-' . strtolower($locale), $classes_array) && !in_array('amazon-hide', $classes_array)) {
-          $classes_array[] = 'amazon-hide';
-        }
-      }
-    }
+    // Hide all initially.
+    $variables['classes_array'][] = 'element-hidden';
   }
 }
 
@@ -87,8 +56,6 @@ function amazon_widget_page_alter(&$page) {
     'weight' => 100,
     'preprocess' => FALSE,
   );
-
-  drupal_add_css('.amazon-hide {display: none;}', $options);
 
   // Add widget settings.
   drupal_add_js(array(
@@ -138,14 +105,6 @@ function _amazon_widget_variable_get($name) {
         '.amazon-item',
         '.field-type-asin',
       );
-      break;
-//
-//    case 'amazon_widget_css_show':
-//      $default = 'amazon-show';
-//      break;
-
-    case 'amazon_widget_css_hide':
-      $default = 'amazon-hide';
       break;
 
     case 'amazon_default_locale':
