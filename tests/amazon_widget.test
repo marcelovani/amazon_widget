@@ -82,7 +82,7 @@ class AmazonWidgetTest extends DrupalWebTestCase {
    * Helper to create a node.
    */
   private function createNode() {
-    $amazon_items = amazon_test_get_amazon_items();
+    $amazon_items = amazon_data_cache();
     $body_value   = '<!--amazon-widget{"data_id":"1498486197951","asin":"' . $amazon_items[0]['asin'] . '","style":"buy_now_wide","locale":"US"}-->';
     $body_value  .= '<!--amazon-widget{"data_id":"6197951498481","asin":"' . $amazon_items[1]['asin'] . '","style":"buy_now_wide","locale":"UK"}-->';
     $this->node = $this->drupalCreateNode(
@@ -137,13 +137,13 @@ class AmazonWidgetTest extends DrupalWebTestCase {
     $this->assertRaw('£8.72', 'UK widget price is on the page.');
 
     // Test CSS for widget.
-    $this->assertRaw('locale-uk amazon-hide', 'CSS to hide widget for non-default locale is present.');
+    $this->assertRaw('locale-uk element-hidden', 'CSS to hide widget for non-default locale is present.');
 
     // When javascript is not available, we do not hide the widget for the default locale.
-    $this->assertNoRaw('locale-us amazon-hide', 'CSS to hide widget for default locale is not present.');
+    $this->assertNoRaw('locale-us element-hidden', 'CSS to hide widget for default locale is not present.');
 
     // Since there is no configuration for Canada associate ID, the CSS to hide Canada widget should not appear on the page.
-    $this->assertNoRaw('locale-ca amazon-hide', 'CSS to hide Canada widget is not present.');
+    $this->assertNoRaw('locale-ca element-hidden', 'CSS to hide Canada widget is not present.');
 
     // Test Js for widget.
     $this->assertRaw('amazon_widget/amazon_widget.js', 'Required Js is present.');
