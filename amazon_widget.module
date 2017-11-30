@@ -23,9 +23,20 @@ function amazon_widget_menu() {
 }
 
 /**
+ * Implements hook_admin_paths().
+ */
+function amazon_widget_admin_paths() {
+  return array('system/ajax/amazon_wysiwyg' => TRUE);
+}
+
+/**
  * Implements hook_preprocess_amazon_item().
  */
 function amazon_widget_preprocess_amazon_item(&$variables, $theme_type) {
+  if (path_is_admin(current_path())) {
+    return;
+  }
+
   // If JS is enabled.
   if (isset($_COOKIE['has_js']) && $_COOKIE['has_js']) {
     // Hide all initially.
