@@ -36,7 +36,10 @@ function amazon_widget_preprocess_amazon_item(&$variables, $theme_type) {
   if (path_is_admin(current_path())) {
     return;
   }
-
+  // Check for locale-xx class in array of classes to apply to this item.
+  if (empty($variables['classes_array']) || !preg_grep("/locale-/", $variables['classes_array'])) {
+    return;
+  }
   // If JS is enabled.
   if (isset($_COOKIE['has_js']) && $_COOKIE['has_js']) {
     // Hide all initially.
