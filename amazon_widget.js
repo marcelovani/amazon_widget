@@ -66,12 +66,20 @@
       var target = null;
       var target_found = false;
       var classes = Drupal.settings.amazon_widget.classes;
+      var not_target = null;
 
       for (var i = 0, len = classes.length; i < len; i++) {
         target = $(classes[i] + '.locale-' + countryCode.toLowerCase());
+        not_target = $(classes[i] + ':not(.locale-' + countryCode.toLowerCase() + ')');
+
+        // Do we have a widget with the country code or the default country code
         if (target !== null && target.length) {
-          target.removeClass('element-hidden');
           target_found = true;
+        }
+
+        // Don't hide anything until we have a local widget or a default country widget
+        if (target_found === true) {
+          $(not_target).hide();
         }
       }
 
