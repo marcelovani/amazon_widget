@@ -136,15 +136,6 @@ class AmazonWidgetTest extends DrupalWebTestCase {
     $this->assertRaw('Complete Matrix Trilogy [Blu-ray] [1999] [Region Free]', 'UK widget title is on the page.');
     $this->assertRaw('£8.72', 'UK widget price is on the page.');
 
-    // Test CSS for widget.
-    $this->assertRaw('locale-uk {display: none}', 'CSS to hide widget for non-default locale is present.');
-
-    // When javascript is not available, we do not hide the widget for the default locale.
-    $this->assertNoRaw('locale-us {display: none}', 'CSS to hide widget for default locale is not present.');
-
-    // Since there is no configuration for Canada associate ID, the CSS to hide Canada widget should not appear on the page.
-    $this->assertNoRaw('locale-ca {display: none}', 'CSS to hide Canada widget is not present.');
-
     // Test Js for widget.
     $this->assertRaw('amazon_widget/amazon_widget.js', 'Required Js is present.');
   }
