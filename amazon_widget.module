@@ -56,13 +56,6 @@ function amazon_widget_page_alter(&$page) {
   $amazon_data = amazon_data_cache();
   $locales = $amazon_data['locales'];
 
-
-  $options = array(
-    'type' => 'inline',
-    'weight' => 100,
-    'preprocess' => FALSE,
-  );
-
   // Add widget settings.
   drupal_add_js(array(
     'amazon_widget' => array(
