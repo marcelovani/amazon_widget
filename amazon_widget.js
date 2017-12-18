@@ -63,28 +63,27 @@
         return this.showLocalizedWidget(defaultLocale);
       }
 
-      var target = null;
-      var target_found = false;
+      var localised = null;
+      var hide = [];
       var classes = Drupal.settings.amazon_widget.classes;
-      var not_target = null;
 
       for (var i = 0, len = classes.length; i < len; i++) {
-        target = $(classes[i] + '.locale-' + countryCode.toLowerCase());
-        not_target = $(classes[i] + ':not(.locale-' + countryCode.toLowerCase() + ')');
-
-        // Do we have a widget with the country code or the default country code
-        if (target !== null && target.length) {
-          target_found = true;
+        if (localised === null || localised.length === 0) {
+          localised = $(classes[i] + '.locale-' + countryCode.toLowerCase());
         }
-
-        // Don't hide anything until we have a local widget or a default country widget
-        if (target_found === true) {
-          $(not_target).hide();
+        var target = $(classes[i] + ':not(.locale-' + countryCode.toLowerCase() + ')');
+        if (target.length) {
+          hide.push(target);
         }
       }
 
-      // If the country code is not resolved, display the default widget.
-      if (!target_found && countryCode !== defaultLocale) {
+      if (hide.length && localised.length) {
+        $.each( hide, function( key, item ) {
+          item.hide();
+        });
+      }
+      else if (countryCode !== defaultLocale) {
+        // If the country code is not resolved, display the default widget.
         this.showLocalizedWidget(defaultLocale);
       }
     },
