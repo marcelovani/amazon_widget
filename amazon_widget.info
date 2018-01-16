@@ -2,6 +2,7 @@ name = Amazon Widget
 description = Client side Amazon widget.
 package = User interface
 core = 7.x
-dependencies[] = amazon
-dependencies[] = amazon_wysiwyg
+dependencies[] = amazon (>= 7.x-2.0-beta2)
+dependencies[] = amazon_wysiwyg (>= 7.x-2.0-beta1)
 files[] = tests/amazon_widget.test
+
