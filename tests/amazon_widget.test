@@ -82,7 +82,7 @@ class AmazonWidgetTest extends DrupalWebTestCase {
    * Helper to create a node.
    */
   private function createNode() {
-    $amazon_items = amazon_data_cache();
+    $amazon_items = amazon_test_get_amazon_items();
     $body_value   = '<!--amazon-widget{"data_id":"1498486197951","asin":"' . $amazon_items[0]['asin'] . '","style":"buy_now_wide","locale":"US"}-->';
     $body_value  .= '<!--amazon-widget{"data_id":"6197951498481","asin":"' . $amazon_items[1]['asin'] . '","style":"buy_now_wide","locale":"UK"}-->';
     $this->node = $this->drupalCreateNode(
